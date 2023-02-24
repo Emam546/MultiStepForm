@@ -38,9 +38,13 @@ export default function Step2({
     const navigate = useNavigate();
     const getForm: React.FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        const obj = objectifyForm(data);
-        if (obj["plan-type"] != undefined) return dispatch(obj, navigate);
+        const formData = new FormData(event.currentTarget);
+        const obj = objectifyForm(formData);
+        if (obj["plan-type"] != undefined)
+            return dispatch(
+                data,
+                navigate
+            );
         else setError(true);
     };
     const setMonthlyState = () =>
@@ -60,7 +64,7 @@ export default function Step2({
 
                 <div
                     className={`plan-radio-container ${
-                        !data["monthly-state"] && "month"
+                        data["monthly-state"] && "month"
                     }`}
                 >
                     {Plans.map((plan, i) => {
@@ -83,13 +87,13 @@ export default function Step2({
                                     ${plan.monthly.price}/mo
                                 </span>
                                 <span className="offer month">
-                                    ${plan.monthly.desc}
+                                    {plan.monthly.desc}
                                 </span>
                                 <span className="price year">
                                     ${plan.yearly.price}/mo
                                 </span>
                                 <span className="offer year">
-                                    ${plan.yearly.desc}
+                                    {plan.yearly.desc}
                                 </span>
                             </BackUpRadio>
                         );
@@ -101,9 +105,8 @@ export default function Step2({
                         type="checkbox"
                         id="flexSwitch"
                         name="monthly-state"
-                        checked={data["monthly-state"]}
+                        checked={!data["monthly-state"]}
                         onClick={setMonthlyState}
-                        onChange={setMonthlyState}
                     />
                     <span id="month">Monthly</span>
                     <div className="plan-frequent">

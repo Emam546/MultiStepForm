@@ -39,16 +39,16 @@ export default function Step4({
                         const add = Ons[i];
                         price += add.price * (data["monthly-state"] ? 1 : 12);
                         return (
-                            <div className="ons-plan d-flex justify-content-between mt-2 mb-2">
+                            <div className="ons-plan d-flex justify-content-between align-items-center mt-2 mb-2">
                                 <span className="text-gray">{add.name}</span>
                                 <span className="text-secondary fw-medium">
-                                    +${add.price}/mo
+                                    +${add.price}/{[data["monthly-state"] ? "mo" : "yr"]}
                                 </span>
                             </div>
                         );
                     })}
                 </div>
-                <div className="total-price d-flex justify-content-between align-content-center">
+                <div className="total-price d-flex justify-content-between align-items-center">
                     <span className="text-gray">
                         Total (per {data["monthly-state"] ? "month" : "year"})
                     </span>

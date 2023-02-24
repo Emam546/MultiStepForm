@@ -34,12 +34,12 @@ function SharedLayout({ step }: { step: number }) {
         </div>
     );
 }
-
+const defaultData:Data={ons:[],"monthly-state":false}
 export default function App() {
     const [step, setStep] = useState(0);
-    const [data, setData] = useState<Data>({ons:[]});
+    const [data, setData] = useState<Data>(defaultData);
     return (
-        <BrowserRouter>
+        <BrowserRouter basename="/MultiStepForm/">
             <Routes>
                 <Route path="/" element={<SharedLayout step={step} />}>
                     <Route
@@ -88,7 +88,7 @@ export default function App() {
                             <Step4
                                 data={data}
                                 dispatch={(newData, navigate) => {
-                                    setData({ ...data, ...newData });
+                                    setData(defaultData);
                                     setStep(0)
                                     navigate("/finish")
                                 }}

@@ -14,9 +14,7 @@ export default function Step3({
     const navigate = useNavigate();
     const getForm: React.FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        const obj = objectifyForm(data);
-        return dispatch(obj, navigate);
+        return dispatch(data, navigate);
     };
     return (
         <div className="step-3">
