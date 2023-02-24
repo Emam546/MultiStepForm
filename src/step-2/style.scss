@@ -1,0 +1,127 @@
+@import "../custom";
+.step-2 {
+    display: flex;
+    flex-direction: column;
+
+    form {
+        flex-grow: 1;
+        color: $secondary;
+        display: flex;
+        flex-direction: column;
+        .error{
+            color:$Strawberry-red;
+        }
+        .plan-radio-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch;
+            gap: rem(20);
+            .radio-container {
+                min-height: rem(140);
+                user-select: none;
+                * {
+                    cursor: pointer;
+                }
+                input {
+                    appearance: none;
+                    display: none;
+                    &:checked + label {
+                        border-color: $secondary;
+                        background-color: $Alabaster;
+                    }
+                }
+
+                label {
+                    width: rem(140);
+                    border: 1px solid $Light-gray;
+                    border-radius: rem(15);
+                    display: flex;
+                    flex-direction: column;
+                    height: 100%;
+                    padding: rem(15);
+                    margin: 0;
+                    img {
+                        width: rem(40);
+                        aspect-ratio: 1 / 1;
+                        margin-bottom: rem(40);
+                    }
+                    &:hover {
+                        border-color: $secondary;
+                    }
+                    .price{
+                        color:$Marine-blue;
+                    }
+                }
+            }
+            &.month{
+                .year{
+                    display: none;
+                }
+
+            }
+            &:not(.month){
+                .month{
+                    display: none;
+                }
+            }
+        }
+        .choose-type {
+            input {
+                display: none;
+                appearance: none;
+                &:checked {
+                    ~ .plan-frequent label::before {
+                        left: rem(45 - 10);
+                    }
+                    ~ #month {
+                        color: $Cool-gray;
+                    }
+                    ~ #year {
+                        color: $secondary;
+                    }
+                }
+            }
+            #year {
+                color: $Cool-gray;
+            }
+
+            margin-top: rem(40);
+            padding: rem(10) rem(5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: $Alabaster;
+            gap: rem(20);
+            .plan-frequent {
+                padding-top: rem(3);
+                label {
+                    cursor: pointer;
+                    $height: 20;
+                    width: rem(45);
+                    height: rem($height);
+                    background-color: $secondary;
+                    border-radius: rem(20);
+                    position: relative;
+                    &::before {
+                        $radius: $height - 2;
+                        content: "";
+                        height: rem($radius);
+                        width: rem($radius);
+                        background-color: $white;
+                        position: absolute;
+                        top: 50%;
+                        left: rem(10);
+                        transform: translateY(-50%) translateX(-50%);
+                        border-radius: 50%;
+                        transition: 0.3s;
+                    }
+                }
+            }
+        }
+
+    }
+}
+.btn{
+    word-spacing: rem(3);
+}
+

@@ -1,0 +1,12 @@
+@import "../custom";
+.step-4{
+    .input-container{
+        >*{
+            padding: rem(25);
+        }
+        .price-state{
+            background-color:$Alabaster;
+        }
+
+    }
+}

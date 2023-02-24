@@ -1,0 +1,16 @@
+@use "./custom" as *;
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: "Ubuntu", sans-serif;
+    background-color: #eef5ff;
+}
+.text-gray {
+    color: $Cool-gray;
+}
+
+

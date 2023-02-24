@@ -1,0 +1,83 @@
+@import "../custom";
+.sidebar{
+    color: $white;
+    border-radius: rem(10);
+    overflow: hidden;
+    
+    list-style: none;
+    counter-reset: num-elements;
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    position: relative;
+
+    ul{
+        width: 100%;
+        padding:40px 30px;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        gap: rem(20);
+        --size:25px;
+        --font-size:16px;
+        li{
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: rem(15);
+            counter-increment: section;
+            font-size: .7em;
+            .step{
+                color: hsl(231, 11%, 63%);
+                display: block;
+            }
+            .head{
+                display: block;
+                font-weight: 700;
+                letter-spacing: rem(3);
+            }   
+            
+            &::before{
+                content: counter(section);
+                border:rem(1) solid $Light-blue;
+                width: var(--size);
+                height: var(--size);
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: var(--font-size);
+            }
+            &.active{
+                &::before{
+                    background-color: $Light-blue;
+                    color: $primary;
+                }
+            }
+        }
+    }
+    @include media-breakpoint-down($mobile-phase) {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        border-radius: 0;
+        z-index: -1;
+        ul{
+            padding:35px 30px;
+            flex-direction: row;
+            justify-content: center;
+            flex-wrap: wrap;
+            --size:33px;
+            --font-size:20px;
+            li{
+                width: fit-content;
+            }
+            .text-container{
+                display: none;
+            }
+        }
+    }
+}
+

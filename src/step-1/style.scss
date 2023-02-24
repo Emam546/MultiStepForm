@@ -1,0 +1,42 @@
+@import "../custom";
+.step-1{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    form{
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        .input-container{
+            margin-bottom: rem(20);
+            .text-container{
+                display: flex;
+                justify-content: space-between;
+                label{
+                    font-weight: bold;
+                    color: $secondary;
+                }
+                .error{
+                    color:$Strawberry-red;
+                }
+            }
+            input{
+                width: 100%;
+                height: 44px;
+                display: block;
+                margin-top: rem(3);
+                border-radius: 5px;
+                padding: 2px 15px;
+                box-sizing: border-box;
+                border: 1px solid $secondary;
+                &:focus{
+                    outline: 1px solid $secondary;
+
+                }
+                &.error:empty{
+                    border-color: $Strawberry-red;
+                }
+            }
+        }
+    }
+}
