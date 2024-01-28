@@ -1,8 +1,7 @@
-export function objectifyForm(formArray: FormData) {
-    //serialize data function
-    var returnArray: Record<string, FormDataEntryValue> = {};
-    [...formArray.entries()].forEach(([name, value], i) => {
-        returnArray[name] = value;
-    });
-    return returnArray;
+
+export function hasOwnProperty<K extends PropertyKey, T>(
+    obj: unknown,
+    key: K
+): obj is Record<K, T> {
+    return Object.prototype.hasOwnProperty.call(obj, key);
 }

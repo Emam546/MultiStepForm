@@ -1,21 +1,21 @@
-import { Link, useNavigate } from "react-router-dom";
-import { Data, DispatchFunction, Ons, SetDataFunction, Urls } from "../custom";
+import { Ons, OnsType } from "../custom";
 import "./style.scss";
-import { objectifyForm } from "../utils";
-export default function Step3({
-    dispatch,
-    data,
-    setData,
-}: {
-    dispatch: DispatchFunction;
-    data: Data;
-    setData: SetDataFunction;
-}) {
-    const navigate = useNavigate();
-    const getForm: React.FormEventHandler<HTMLFormElement> = (event) => {
-        event.preventDefault();
-        return dispatch(data, navigate);
-    };
+import {
+    Data,
+    DataType,
+    State,
+    useAppDispatch,
+    useAppSelector,
+} from "../store";
+import { useForm } from "react-hook-form";
+export default function OnesForm() {
+    const defaultValue = useAppSelector((state) => {
+        return state[Data.name].ones;
+    });
+    const { register, handleSubmit } = useForm<DataType["ones"]>({
+        defaultValues: defaultValue,
+    });
+    const dispatch = useAppDispatch();
     return (
         <div className="step-3">
             <h2 className="fw-bold text-secondary mt-4">Pick add-ons</h2>
@@ -24,33 +24,31 @@ export default function Step3({
             </p>
             <form
                 action="#"
-                onSubmit={getForm}
+                onSubmit={handleSubmit((data) => {
+                    dispatch(
+                        Data.actions.setData({
+                            name: "ones",
+                            data,
+                        })
+                    );
+                    dispatch(State.actions.Next());
+                })}
                 method="POST"
                 className="choose-options"
             >
                 <div className="inputs-holder">
                     {Object.entries(Ons).map(([name, val]) => {
-                        const onChange = () => {
-                            if (data.ons.includes(name)) {
-                                setData({
-                                    ...data,
-                                    ons: data.ons.filter((val) => val != name),
-                                });
-                            } else {
-                                setData({ ...data, ons: [...data.ons, name] });
-                            }
-                        };
                         return (
-                            <div className="input-holder">
+                            <div
+                                key={name}
+                                className="input-holder"
+                            >
                                 <input
                                     type="checkbox"
-                                    name={name}
-                                    checked={data.ons.includes(name)}
-                                    onChange={onChange}
-                                    onClick={onChange}
+                                    {...register(name as keyof OnsType)}
                                     id={name.split(" ").join("_")}
                                 />
-                                <label htmlFor={name}>
+                                <label htmlFor={name.split(" ").join("_")}>
                                     <div className="check-input"></div>
                                     <div className="header">
                                         <h6 className="text-secondary fw-bold">
@@ -68,7 +66,15 @@ export default function Step3({
                 </div>
                 <div className="submit-section">
                     <div className="d-flex flex-grow-1 justify-content-between align-items-center">
-                        <Link to={`/${Urls[1]}`}>Go Back</Link>
+                        <button
+                            className="btn-link"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                dispatch(State.actions.Back());
+                            }}
+                        >
+                            Go Back
+                        </button>
                         <input
                             type="submit"
                             className="btn btn-secondary p-2 ps-3 pe-3"

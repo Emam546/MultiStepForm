@@ -1,12 +1,17 @@
 @import "../custom";
-.step-4{
-    .input-container{
-        >*{
+.step-4 {
+    .input-container {
+        > * {
             padding: rem(25);
         }
-        .price-state{
-            background-color:$Alabaster;
+        .price-state {
+            background-color: $Alabaster;
         }
-
+    }
+    .price-state .plan-type:not(:last-child) {
+        border-bottom: 1px solid $Cool-gray;
+        padding-bottom: rem(15);
+        margin-bottom: rem(15) !important;
+        
     }
 }

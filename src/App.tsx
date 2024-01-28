@@ -1,106 +1,85 @@
 import "./App.scss";
 import { SideBar } from "./sidebar";
-import { useState } from "react";
-
-import Step1 from "./step-1";
-import Step2 from "./step-2";
+import { useEffect, useLayoutEffect } from "react";
 import {
     BrowserRouter,
     Route,
-    Routes,
     Outlet,
-    useLocation,
     Navigate,
+    Routes,
+    useNavigate,
 } from "react-router-dom";
-import { Steps, Urls, Data } from "./custom";
-import Step3 from "./step-3";
-import Step4 from "./step-4";
+import { Steps, sortedSteps } from "./custom";
+export const base = "/MultiStepForm/";
+
+import { State, store, useAppSelector } from "./store";
+import { Provider } from "react-redux";
+import InfoForm from "./step-1";
+import Summury from "./step-4";
+import OnesForm from "./step-3";
+import PlanForm from "./step-2";
 import Finish from "./finish";
 
-function SharedLayout({ step }: { step: number }) {
-    const location = useLocation();
-    const name = location.pathname.slice(1);
-    const curStep = Urls.findIndex((val) => {
-        return name == val;
-    });
-    if (curStep > step)
-        return <Navigate to={`/${Urls[step]}`} />;
+function SharedLayout() {
+    const step = useAppSelector((state) => state[State.name].step);
+    const navigate = useNavigate();
+    useEffect(() => {
+        const url = sortedSteps.find((val) => val.num == step)?.url;
+        if (url == undefined) throw new Error("unrecognized step");
+        navigate(`/${url}`);
+    }, [step]);
+    
     return (
         <div className="big-container">
-            <SideBar state={curStep!=-1?curStep:Urls.length-1} stepNames={Steps} />
+            <SideBar />
             <main>
                 <Outlet />
             </main>
         </div>
     );
 }
-const defaultData:Data={ons:[],"monthly-state":false}
+
 export default function App() {
-    const [step, setStep] = useState(0);
-    const [data, setData] = useState<Data>(defaultData);
     return (
-        <BrowserRouter basename="/MultiStepForm/">
-            <Routes>
-                <Route path="/" element={<SharedLayout step={step} />}>
+        <Provider store={store}>
+            <BrowserRouter basename={base}>
+                <Routes>
                     <Route
-                        path={Urls[0]}
-                        element={
-                            <Step1
-                                dispatch={(newData, navigate) => {
-                                    setData({ ...data,...newData });
-                                    setStep(1);
-                                    navigate(`/${Urls[1]}`);
-                                }}
-                            />
-                        }
-                    />
-                    <Route
-                        path={Urls[1]}
-                        element={
-                            <Step2
-                                data={data}
-                                setData={setData}
-                                dispatch={(newData, navigate) => {
-                                    setData({ ...data, ...newData });
-                                    setStep(2);
-                                    navigate(`/${Urls[2]}`);
-                                }}
-                            />
-                        }
-                    />
-                    <Route
-                        path={Urls[2]}
-                        element={
-                            <Step3
-                                data={data}
-                                setData={setData}
-                                dispatch={(newData, navigate) => {
-                                    setData({ ...data, ...newData });
-                                    setStep(3);
-                                    navigate(`/${Urls[3]}`);
-                                }}
-                            />
-                        }
-                    />
-                    <Route
-                        path={Urls[3]}
-                        element={
-                            <Step4
-                                data={data}
-                                dispatch={(newData, navigate) => {
-                                    setData(defaultData);
-                                    setStep(0)
-                                    navigate("/finish")
-                                }}
-                            />
-                        }
-                    />
-                    <Route path="/finish" element={<Finish />}/>
-                    <Route path="*" element={<>
-                        <Navigate to="/"/>
-                    </>} />
-                </Route>
-            </Routes>
-        </BrowserRouter>
+                        path="/"
+                        element={<SharedLayout />}
+                    >
+                        <Route
+                            path={`/${Steps["info"].url}`}
+                            element={<InfoForm />}
+                        />
+                        <Route
+                            path={`/${Steps["plan"].url}`}
+                            element={<PlanForm />}
+                        />
+                        <Route
+                            path={`/${Steps["summery"].url}`}
+                            element={<Summury />}
+                        />
+                        <Route
+                            path={`/${Steps["Add-ons"].url}`}
+                            element={<OnesForm />}
+                        />
+                        <Route
+                            path={`/${Steps["finish"].url}`}
+                            element={<Finish />}
+                        />
+
+                        <Route
+                            path="*"
+                            element={
+                                <>
+                                    <Navigate to="/" />
+                                </>
+                            }
+                        />
+                    </Route>
+                </Routes>
+            </BrowserRouter>
+        </Provider>
     );
 }

@@ -1,16 +1,21 @@
-import { Link, useNavigate } from "react-router-dom";
-import { Data, DispatchFunction, Plans, Urls, Ons } from "../custom";
+import { Link } from "react-router-dom";
+import { Plans, Ons, OnsType, Steps } from "../custom";
 import "./style.scss";
-export default function Step4({
-    dispatch,
-    data,
-}: {
-    dispatch: DispatchFunction;
-    data: Data;
-}) {
-    const navigate = useNavigate();
-    const plan = Plans[data["plan-type"] || 0];
-    let price = plan[data["monthly-state"] ? "monthly" : "yearly"].price;
+import { Data, State, useAppDispatch, useAppSelector } from "../store";
+export default function Summury() {
+    const dispatch = useAppDispatch();
+    const data = useAppSelector((state) => state[Data.name]);
+    const plan = Plans[parseInt(data.planData["plan-type"])];
+    if (!plan) return null;
+
+    let price =
+        plan[data.planData["monthly-state"] ? "monthly" : "yearly"].price;
+    console.log(data.ones);
+    const selectedPlans: Array<keyof OnsType> = Object.entries(data.ones)
+        .filter(([, val]) => val)
+        .reduce((acc, [name]) => {
+            return [...acc, name as keyof OnsType];
+        }, [] as Array<keyof OnsType>);
     return (
         <div className="step-4 d-flex flex-column">
             <h2 className="fw-bold text-secondary mt-4">Select your plan</h2>
@@ -22,27 +27,42 @@ export default function Step4({
                     <div className="plan-type d-flex justify-content-between align-items-center">
                         <p className="text-secondary fw-bold m-0 fs-6">
                             {plan.name} (
-                            {data["monthly-state"] ? "Monthly" : "Yearly"})
-                            <Link
-                                to={`/${Urls[1]}`}
-                                className="d-block text-gray"
+                            {data.planData["monthly-state"]
+                                ? "Monthly"
+                                : "Yearly"}
+                            )
+                            <button
+                                onClick={() => {
+                                    dispatch(
+                                        State.actions.setStep(Steps["plan"].num)
+                                    );
+                                }}
+                                className="d-block text-gray btn-link"
                             >
                                 Change
-                            </Link>
+                            </button>
                         </p>
                         <span className="text-secondary fw-bold fs-6">
-                            ${price}/{[data["monthly-state"] ? "mo" : "yr"]}
+                            ${price}/
+                            {[data.planData["monthly-state"] ? "mo" : "yr"]}
                         </span>
                     </div>
-                    {data.ons.length!=0 && <hr className="text-gray" />}
-                    {data.ons.map((i) => {
-                        const add = Ons[i];
-                        price += add.price * (data["monthly-state"] ? 1 : 12);
+                    {selectedPlans.map((name) => {
+                        const add = Ons[name as keyof OnsType];
+                        price +=
+                            add.price *
+                            (data.planData["monthly-state"] ? 1 : 12);
+
                         return (
                             <div className="ons-plan d-flex justify-content-between align-items-center mt-2 mb-2">
                                 <span className="text-gray">{add.name}</span>
                                 <span className="text-secondary fw-medium">
-                                    +${add.price}/{[data["monthly-state"] ? "mo" : "yr"]}
+                                    +${add.price}/
+                                    {[
+                                        data.planData["monthly-state"]
+                                            ? "mo"
+                                            : "yr",
+                                    ]}
                                 </span>
                             </div>
                         );
@@ -50,23 +70,33 @@ export default function Step4({
                 </div>
                 <div className="total-price d-flex justify-content-between align-items-center">
                     <span className="text-gray">
-                        Total (per {data["monthly-state"] ? "month" : "year"})
+                        Total (per{" "}
+                        {data.planData["monthly-state"] ? "month" : "year"})
                     </span>
                     <span className="text-primary fw-bold fs-5">
-                        +${price}/{[data["monthly-state"] ? "mo" : "yr"]}
+                        +${price}/
+                        {[data.planData["monthly-state"] ? "mo" : "yr"]}
                     </span>
                 </div>
             </div>
             <div className="submit-section">
                 <div className="d-flex flex-grow-1 justify-content-between align-items-center">
-                    <Link to={`/${Urls[2]}`}>Go Back</Link>
+                    <button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            dispatch(State.actions.Back());
+                        }}
+                        className="btn-link"
+                    >
+                        Go Back
+                    </button>
                     <input
                         type="button"
+                        onClick={() => {
+                            dispatch(State.actions.Next());
+                        }}
                         className="btn btn-primary p-2 ps-3 pe-3"
                         value="Confirm"
-                        onClick={() => {
-                            return dispatch(data, navigate);
-                        }}
                     />
                 </div>
             </div>

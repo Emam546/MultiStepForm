@@ -1,20 +1,30 @@
-import { NavigateFunction } from "react-router-dom";
-
-export const Steps = ["Your info", "Select plan", "Add-ons", "Summary"];
-export const Urls = ["", "select-plan", "add-ons", "summary"];
-export type Data = {
-    name?: string;
-    email?: string;
-    phone?: string;
-    "plan-type"?: number;
-    "monthly-state"?: boolean;
-    ons: Array<string>;
+export const Steps = {
+    info: {
+        num: 0,
+        url: "",
+        title: "Your info"
+    },
+    plan: {
+        title: "Select plan",
+        num: 1,
+        url: "select-plan"
+    },
+    "Add-ons": {
+        title: "Select plan",
+        num: 2,
+        url: "add-ons"
+    },
+    summery: {
+        title: "Summary",
+        num: 3,
+        url: "summary",
+    },
+    finish: {
+        num: 4,
+        url: "finish"
+    },
 };
-export type SetDataFunction = React.Dispatch<React.SetStateAction<Data>>;
-export type DispatchFunction = (
-    data: Partial<Data>,
-    navigate: NavigateFunction
-) => void;
+export const sortedSteps = Object.values(Steps).sort((a, b) => a.num - b.num);
 export type PlansType = {
     name: string;
     img: string;
@@ -65,15 +75,7 @@ export const Plans: PlansType = [
     },
 ];
 
-export type OnsType = Record<
-    string,
-    {
-        name: string;
-        desc: string;
-        price: number;
-    }
->;
-export const Ons: OnsType = {
+export const Ons = {
     "onlineSrv-add": {
         name: "Online service",
         desc: "Access to multiplayer games",
@@ -90,3 +92,5 @@ export const Ons: OnsType = {
         price: 2,
     },
 };
+
+export type OnsType = typeof Ons;

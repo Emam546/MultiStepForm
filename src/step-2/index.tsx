@@ -1,85 +1,74 @@
-import { ReactNode, useState } from "react";
+import React, { ReactNode } from "react";
 import "./style.scss";
-import { Link, useNavigate } from "react-router-dom";
-import {
-    DispatchFunction,
-    Urls,
-    Plans,
-    SetDataFunction,
-    Data,
-} from "../custom";
-import { objectifyForm } from "../utils";
-export function BackUpRadio({
-    children,
-    ...a
-}: { children?: ReactNode } & React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
->) {
+import { Plans } from "../custom";
+import { useForm } from "react-hook-form";
+import { Data, DataType, State, useAppSelector } from "../store";
+import { useDispatch } from "react-redux";
+export const BackUpRadio = React.forwardRef<
+    HTMLInputElement,
+    React.InputHTMLAttributes<HTMLInputElement>
+>(({ children, ...a }, ref) => {
     const id = Math.floor(Math.random() * Date.now()).toString();
     return (
         <div className="radio-container">
-            <input type="radio" {...a} id={id} />
+            <input
+                type="radio"
+                {...a}
+                id={id}
+                ref={ref}
+            />
             <label htmlFor={id}>{children}</label>
         </div>
     );
-}
+});
 
-export default function Step2({
-    dispatch,
-    data,
-    setData,
-}: {
-    dispatch: DispatchFunction;
-    data: Data;
-    setData: SetDataFunction;
-}) {
-    const [error, setError] = useState(false);
-    const navigate = useNavigate();
-    const getForm: React.FormEventHandler<HTMLFormElement> = (event) => {
-        event.preventDefault();
-        const formData = new FormData(event.currentTarget);
-        const obj = objectifyForm(formData);
-        if (obj["plan-type"] != undefined)
-            return dispatch(
-                data,
-                navigate
-            );
-        else setError(true);
-    };
-    const setMonthlyState = () =>
-        setData({ ...data, "monthly-state": !data["monthly-state"] });
+export default function PlanForm() {
+    const dispatch = useDispatch();
+    const data = useAppSelector((state) => state.data.planData);
+    const { register, formState, watch, handleSubmit } = useForm<
+        DataType["planData"]
+    >({ defaultValues: data });
+    const monthlyState = watch("monthly-state");
     return (
         <div className="step-2">
             <h2 className="fw-bold text-secondary mt-4">Select your plan</h2>
             <p className="fw-light">
                 You have the option of monthly or yearly billing.
             </p>
-            <form action="#" method="post" onSubmit={getForm}>
-                {error && (
-                    <span className="text-danger fs-5 d-block mb-2 text-center">
-                        select an option first
+            <form
+                action="#"
+                method="post"
+                onSubmit={handleSubmit((data) => {
+                    console.log(data);
+                    dispatch(Data.actions.setData({ name: "planData", data }));
+                    dispatch(State.actions.Next());
+                })}
+            >
+                {formState.errors["plan-type"] && (
+                    <span className="text-danger d-block mb-2 text-center">
+                        {formState.errors["plan-type"].message}
                     </span>
                 )}
 
                 <div
                     className={`plan-radio-container ${
-                        data["monthly-state"] && "month"
+                        monthlyState && "month"
                     }`}
                 >
                     {Plans.map((plan, i) => {
-                        const change = () =>
-                            setData({ ...data, "plan-type": i });
                         return (
                             <BackUpRadio
-                                name="plan-type"
-                                value={i}
+                                {...register("plan-type", {
+                                    required: "select an option first",
+                                })}
+                                value={i.toString()}
                                 key={i}
-                                checked={data["plan-type"] == i}
-                                onClick={change}
-                                onChange={change}
+                                id={`plan-${i}`}
                             >
-                                <img src={plan.img} alt="" />
+                                <img
+                                    src={plan.img}
+                                    alt={`${plan.name} img`}
+                                />
                                 <h5 className="text-secondary fw-medium m-0">
                                     {plan.name}
                                 </h5>
@@ -104,9 +93,7 @@ export default function Step2({
                         className="check-monthly"
                         type="checkbox"
                         id="flexSwitch"
-                        name="monthly-state"
-                        checked={!data["monthly-state"]}
-                        onClick={setMonthlyState}
+                        {...register("monthly-state")}
                     />
                     <span id="month">Monthly</span>
                     <div className="plan-frequent">
@@ -116,7 +103,15 @@ export default function Step2({
                 </div>
                 <div className="submit-section">
                     <div className="d-flex flex-grow-1 justify-content-between align-items-center">
-                        <Link to={`/${Urls[0]}`}>Go Back</Link>
+                        <button
+                            className="btn-link"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                dispatch(State.actions.Back());
+                            }}
+                        >
+                            Go Back
+                        </button>
                         <input
                             type="submit"
                             className="btn btn-secondary p-2 ps-3 pe-3"

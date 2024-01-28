@@ -44,7 +44,7 @@
     flex-grow: 1;
     display: flex;
     align-items: flex-end;
-    @include media-breakpoint-up($mobile-phase){
+    @include media-breakpoint-up($mobile-phase) {
         padding-top: rem(50);
     }
     a {
@@ -54,7 +54,7 @@
             color: $secondary;
         }
     }
-    @include media-breakpoint-down($mobile-phase){
+    @include media-breakpoint-down($mobile-phase) {
         position: absolute;
         bottom: 0;
         left: 0;
@@ -62,5 +62,14 @@
         background-color: $white;
         padding: rem(15) rem(20);
         margin: 0;
+    }
+}
+.btn-link {
+    background: none;
+    border: none;
+    text-decoration: none !important;
+    color: $Cool-gray;
+    &:hover {
+        color: $secondary;
     }
 }
